@@ -1,0 +1,388 @@
+import React, { useState } from 'react';
+import { ChevronDown, ChevronUp, ShieldCheck, TrendingUp, AlertCircle, Building, Lock, HelpCircle, ArrowRight } from 'lucide-react';
+
+const faqData = [
+  {
+    categoryId: 'withdrawal-issues',
+    categoryTitle: 'Withdrawal Issues',
+    icon: <AlertCircle className="w-6 h-6" />,
+    questions: [
+      {
+        q: "When will normal withdrawals be fully restored?",
+        a: "Normal withdrawals are expected to be fully restored within the next 4 to 6 weeks. We are currently upgrading our payment gateway infrastructure to handle increased global volume and ensure enhanced security protocols for all transactions."
+      },
+      {
+        q: "Why were external withdrawals suddenly stopped without prior notice?",
+        a: "The pause was a precautionary measure triggered automatically by our security systems. We detected irregular API routing from one of our third-party liquidity providers. To protect investor funds, external transfers were temporarily halted until the routing could be verified and secured."
+      },
+      {
+        q: "Is there any official timeline for resolving the withdrawal issue?",
+        a: "Yes. We anticipate a phased rollout of the restored system beginning mid-next month. VIP and institutional accounts will be processed first to test network stability, followed by a full normalization for all retail accounts shortly after."
+      },
+      {
+        q: "Are all investors’ funds fully backed and available right now?",
+        a: "Absolutely. All client funds are held in segregated institutional accounts and are fully backed 1:1. The current issue is purely a processing and network bottleneck with our payment processors, not a liquidity shortfall."
+      },
+      {
+        q: "If someone wants to withdraw the full amount, will it be allowed?",
+        a: "Yes. Once the main gateway is fully restored and online, investors will be able to withdraw their full available balances, subject to our standard daily network limits and KYC verification requirements."
+      },
+      {
+        q: "Why was the P2P withdrawal system introduced instead of fixing the main withdrawal system?",
+        a: "The P2P system was introduced as a temporary, alternative off-ramp to provide immediate liquidity options for users who needed urgent access to funds. It operates independently of the main gateway, which requires extensive compliance and technical overhauls that take time to complete safely."
+      },
+      {
+        q: "Is the withdrawal restriction temporary or permanent?",
+        a: "This restriction is strictly temporary. This is a structural upgrade period designed to build a more robust platform for the future, not a permanent operational state."
+      },
+      {
+        q: "If the issue continues, what guarantee does the company give to investors?",
+        a: "We guarantee that all verified account balances remain intact on our immutable ledger. We are legally committed to processing all pending requests chronologically as gateway bandwidth increases. Our legal and financial teams are actively monitoring the resolution to ensure full compliance."
+      }
+    ]
+  },
+  {
+    categoryId: 'company-transparency',
+    categoryTitle: 'Company Transparency',
+    icon: <Building className="w-6 h-6" />,
+    questions: [
+      {
+        q: "Where exactly are investors’ funds stored or invested?",
+        a: "Funds are stored securely in Tier-1 institutional bank accounts and deployed across diversified, high-liquidity trading pools. A portion of operational capital is kept in cold storage to prevent unauthorized digital access."
+      },
+      {
+        q: "Does the company have proof of reserves or liquidity?",
+        a: "Yes. We are currently working with an independent, top-tier auditing firm to finalize and publish a comprehensive, cryptographic Proof of Reserves (PoR) report by the end of the upcoming quarter."
+      },
+      {
+        q: "Can the company show audited financial reports?",
+        a: "Historical financial summaries are currently available to our institutional clients under NDA. As part of our new transparency initiative, we are transitioning to making quarterly audited summaries available to all verified retail users."
+      },
+      {
+        q: "Who is responsible for managing investors’ funds?",
+        a: "Funds are managed by our internal Risk and Asset Management Committee, which comprises verified veterans from traditional finance, quantitative analysis, and algorithmic trading sectors."
+      },
+      {
+        q: "Is the company registered and regulated anywhere officially?",
+        a: "Long Asia operates strictly under the regulatory frameworks of our incorporated jurisdictions. We prioritize AML (Anti-Money Laundering) and KYC (Know Your Customer) global compliance standards to ensure legal operation."
+      },
+      {
+        q: "What legal protection do investors have if something goes wrong?",
+        a: "Investors are protected by our comprehensive terms of service, which include strict mandates for segregated fund management. Furthermore, we maintain platform-level contingency insurance policies designed to cover assets in the event of external security breaches."
+      }
+    ]
+  },
+  {
+    categoryId: 'trading-profit-model',
+    categoryTitle: 'Trading & Profit Model',
+    icon: <TrendingUp className="w-6 h-6" />,
+    questions: [
+      {
+        q: "What is the exact business model generating returns?",
+        a: "We utilize high-frequency quantitative trading (HFT), statistical arbitrage, and delta-neutral yield strategies across global forex, commodities, and digital asset markets to generate consistent returns."
+      },
+      {
+        q: "Is the profit coming from real trading or another source?",
+        a: "Returns are generated strictly and exclusively from live market trading activities, algorithmic yield generation, and liquidity provisioning. We do not use new user deposits to pay existing investors."
+      },
+      {
+        q: "Can the company show verified trading history?",
+        a: "We provide periodic performance reports and anonymized trade execution logs within the user dashboard. To protect our proprietary algorithms, we do not share real-time, tick-by-tick data, but verifiable historical aggregates are available."
+      },
+      {
+        q: "What risk management system is used for investors’ capital?",
+        a: "We employ strict automated stop-loss protocols, maximum drawdown limits per trading strategy, and dynamic position sizing. This ensures that no single market event can severely impact the overall capital pool."
+      },
+      {
+        q: "If the market crashes, how does the company protect investor funds?",
+        a: "Our core strategies are delta-neutral, meaning they are designed to profit from market inefficiencies and volatility rather than directional movements. This provides a built-in hedge, protecting investor capital even during severe, prolonged market downturns."
+      }
+    ]
+  },
+  {
+    categoryId: 'current-problems',
+    categoryTitle: 'Current Problems',
+    icon: <HelpCircle className="w-6 h-6" />,
+    questions: [
+      {
+        q: "What exactly caused the current withdrawal problem?",
+        a: "The delay was caused by a combination of sudden, unexpected regulatory adjustments by our primary international banking partners and a necessary, synchronous migration of our core database to a more secure server environment."
+      },
+      {
+        q: "Is the issue related to liquidity shortage or technical problems?",
+        a: "It is strictly a technical, routing, and compliance problem. We maintain full 1:1 liquidity to cover all client assets on the platform."
+      },
+      {
+        q: "Why were investors not informed earlier about these issues?",
+        a: "The situation with our routing partners evolved rapidly over a weekend. We prioritized stabilizing the internal ledger and securing the network before issuing public statements to ensure the information we provided was 100% accurate and actionable."
+      },
+      {
+        q: "What steps are being taken right now to solve the problem?",
+        a: "We are actively integrating three new, redundant payment processors to bypass the bottleneck. Additionally, we have expanded our internal compliance team to expedite the manual review of pending transactions."
+      },
+      {
+        q: "Has the company faced similar issues before?",
+        a: "Like many rapidly growing financial technology platforms, we have faced standard growing pains, but we have never experienced a structural processing delay of this specific magnitude. We are treating this as a critical learning event to fortify our systems."
+      }
+    ]
+  },
+  {
+    categoryId: 'future-security',
+    categoryTitle: 'Future Security',
+    icon: <ShieldCheck className="w-6 h-6" />,
+    questions: [
+      {
+        q: "What guarantees that this situation won’t happen again?",
+        a: "The implementation of multi-node, redundant payment gateways and automated liquidity failovers currently underway will eliminate single points of failure, heavily mitigating the risk of this recurring."
+      },
+      {
+        q: "Will the company provide regular transparency reports?",
+        a: "Yes. Moving forward, we are committing to publishing monthly operational updates and quarterly verified asset reports directly to your user dashboard."
+      },
+      {
+        q: "Can investors get direct access to their funds anytime in the future?",
+        a: "Absolutely. Our core mission remains unchanged: to provide a seamless, unrestricted, and secure financial environment. Once upgrades are complete, standard 24/7 access will resume."
+      },
+      {
+        q: "What is the company’s long-term sustainability plan?",
+        a: "Our long-term plan involves diversifying our regulatory footprint to prevent regional bottlenecks, expanding our institutional product suite, and fully automating the retail deposit and withdrawal pipelines for maximum efficiency."
+      },
+      {
+        q: "If someone wants to stop investing completely, how will the company process their withdrawal?",
+        a: "Once normal operations are restored, users can initiate a full account closure request. This will trigger a final settlement process, transferring all remaining capital and accrued profits to their linked bank account or designated wallet."
+      }
+    ]
+  },
+  {
+    categoryId: 'final-accountability',
+    categoryTitle: 'Final Accountability',
+    icon: <Lock className="w-6 h-6" />,
+    questions: [
+      {
+        q: "If withdrawals cannot be restored, what compensation or solution will the company provide to investors?",
+        a: "We are fully confident in the restoration of the gateways. However, in the highly unlikely event of an insurmountable network failure, Long Asia is committed to a structured, legally compliant liquidation and distribution process. This process will systematically return all verified capital directly to investors through alternative, regulated channels, ensuring full accountability."
+      }
+    ]
+  }
+];
+
+const FAQItem = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border border-white/10 mb-4 bg-black/40 backdrop-blur-sm overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:border-white/40 hover:shadow-[0_0_25px_rgba(255,255,255,0.15)] relative group">
+      {/* Futuristic accent line */}
+      <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white/20 group-hover:bg-white transition-colors duration-500"></div>
+      
+      <button
+        className="w-full px-8 py-6 text-left flex justify-between items-center focus:outline-none bg-transparent"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className={`font-medium pr-8 text-lg tracking-wide transition-all duration-500 ${isOpen ? 'text-white [text-shadow:0_0_10px_rgba(255,255,255,0.6)]' : 'text-white/90 group-hover:text-white group-hover:[text-shadow:0_0_8px_rgba(255,255,255,0.3)]'}`}>{question}</span>
+        <div className={`p-2 border rounded-full transition-all duration-500 ${isOpen ? 'border-white bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.8)] scale-110' : 'border-white/20 text-white group-hover:border-white/60 group-hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]'}`}>
+          {isOpen ? (
+            <ChevronUp className="w-4 h-4 flex-shrink-0" />
+          ) : (
+            <ChevronDown className="w-4 h-4 flex-shrink-0" />
+          )}
+        </div>
+      </button>
+      <div
+        className={`px-8 overflow-hidden transition-all duration-500 ease-in-out ${
+          isOpen ? 'max-h-96 pb-6 opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <p className="text-neutral-400 leading-relaxed font-light">{answer}</p>
+      </div>
+    </div>
+  );
+};
+
+export default function App() {
+  const [activeCategory, setActiveCategory] = useState(faqData[0].categoryId);
+
+  const scrollToCategory = (id) => {
+    setActiveCategory(id);
+    const element = document.getElementById(id);
+    if (element) {
+      const yOffset = -100; // Header offset
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-white/30 selection:text-white relative">
+      
+      {/* Entrance Animations Styles */}
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(30px); filter: blur(4px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        .animate-fade-up {
+          animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          opacity: 0;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+      `}</style>
+
+      {/* Futuristic Grid Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:3rem_3rem]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-30%,#ffffff15,transparent)]"></div>
+      </div>
+      
+      {/* Navigation / Header */}
+      <nav className="fixed w-full z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-28">
+            {/* Logo */}
+            <a href="#" className="flex items-center cursor-pointer z-10 transition-all duration-500 hover:scale-105 hover:[filter:drop-shadow(0_0_15px_rgba(255,255,255,0.4))]">
+               <img src="https://i.ibb.co/kVwvjjrR/long-asia-png.png" alt="Long Asia Logo" className="h-20 md:h-24 w-auto object-contain grayscale brightness-0 invert" />
+            </a>
+            
+            {/* Desktop Nav */}
+            <div className="hidden md:flex space-x-8 items-center z-10">
+              <a href="#" className="text-neutral-400 hover:text-white transition-colors text-xs tracking-[0.2em] uppercase font-medium">Home</a>
+              <a href="#" className="text-neutral-400 hover:text-white transition-colors text-xs tracking-[0.2em] uppercase font-medium">About Us</a>
+              <a href="#" className="text-white font-medium text-xs tracking-[0.2em] uppercase relative">
+                Support
+                <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>
+              </a>
+              <a href="#" className="text-neutral-400 hover:text-white transition-colors text-xs tracking-[0.2em] uppercase font-medium">Contact</a>
+            </div>
+
+            {/* CTA Button */}
+            <div className="hidden md:block z-10">
+              <a href="https://login.longasiagroups.com/" target="_blank" rel="noopener noreferrer" className="inline-block group relative px-6 py-2.5 bg-transparent border border-white/30 text-white text-xs tracking-[0.15em] uppercase font-medium overflow-hidden transition-all hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                <span className="relative z-10 group-hover:text-black transition-colors duration-300">Client Portal</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden z-10">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center space-x-3 bg-black/50 backdrop-blur-md text-white px-5 py-2 border border-white/20 mb-8 uppercase tracking-widest text-xs font-mono shadow-[0_0_15px_rgba(255,255,255,0.05)] animate-fade-up delay-100">
+            <span className="w-2 h-2 bg-white rounded-full animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>
+            <span>System Status: Operational</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tighter mb-6 text-white uppercase [text-shadow:0_0_20px_rgba(255,255,255,0.2)] animate-fade-up delay-200">
+            Support <span className="font-bold [text-shadow:0_0_30px_rgba(255,255,255,0.6)] animate-[pulse_4s_ease-in-out_infinite]">Terminal</span>
+          </h1>
+          <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-400 leading-relaxed font-light animate-fade-up delay-300">
+            Immutable transparency. Find detailed operational parameters, network upgrades, and fund security protocols.
+          </p>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 relative z-10 animate-fade-up delay-400">
+        <div className="flex flex-col lg:flex-row gap-12">
+          
+          {/* Sidebar Navigation (Futuristic HUD style) */}
+          <div className="lg:w-1/3 xl:w-1/4 flex-shrink-0">
+            <div className="sticky top-28 bg-black/40 border border-white/10 p-6 backdrop-blur-md relative overflow-hidden group">
+              {/* Corner accents */}
+              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/50"></div>
+              <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/50"></div>
+              <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/50"></div>
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/50"></div>
+
+              <h3 className="text-xs font-mono text-neutral-500 uppercase tracking-[0.2em] mb-6 flex items-center">
+                <span className="w-4 h-[1px] bg-neutral-500 mr-3"></span>
+                Query Index
+              </h3>
+              
+              <nav className="space-y-1">
+                {faqData.map((category) => (
+                  <button
+                    key={category.categoryId}
+                    onClick={() => scrollToCategory(category.categoryId)}
+                    className={`w-full flex items-center space-x-4 px-4 py-4 text-left transition-all duration-300 relative group ${
+                      activeCategory === category.categoryId
+                        ? 'bg-white/10 text-white'
+                        : 'text-neutral-500 hover:bg-white/5 hover:text-neutral-300'
+                    }`}
+                  >
+                    {activeCategory === category.categoryId && (
+                      <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-white shadow-[0_0_15px_rgba(255,255,255,1)]"></div>
+                    )}
+                    <span className={`${activeCategory === category.categoryId ? 'text-white [text-shadow:0_0_10px_rgba(255,255,255,0.5)]' : 'text-neutral-500 group-hover:-translate-y-0.5 transition-transform duration-300'}`}>
+                      {category.icon}
+                    </span>
+                    <span className={`text-sm font-medium tracking-wide transition-all duration-300 ${activeCategory === category.categoryId ? '[text-shadow:0_0_10px_rgba(255,255,255,0.5)]' : 'group-hover:translate-x-1'}`}>{category.categoryTitle}</span>
+                  </button>
+                ))}
+              </nav>
+
+              <div className="mt-8 pt-6 border-t border-white/10">
+                <p className="text-xs font-mono text-neutral-500 mb-4 uppercase tracking-wider">Direct Access</p>
+                <a href="#" className="flex items-center text-white hover:text-neutral-300 font-medium text-sm transition-colors group/link w-max">
+                  Initialize Support Comms 
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover/link:translate-x-1 transition-transform" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* FAQ Content */}
+          <div className="lg:w-2/3 xl:w-3/4">
+            {faqData.map((category) => (
+              <div 
+                key={category.categoryId} 
+                id={category.categoryId} 
+                className="mb-20 scroll-mt-32"
+              >
+                <div className="flex items-center space-x-4 mb-8 pb-4 border-b border-white/10">
+                  <div className="p-3 bg-white/5 text-white border border-white/20">
+                    {category.icon}
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-light text-white uppercase tracking-wider">
+                    {category.categoryTitle}
+                  </h2>
+                </div>
+                
+                <div className="space-y-4">
+                  {category.questions.map((item, index) => (
+                    <FAQItem key={index} question={item.q} answer={item.a} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-black py-12 border-t border-white/10 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center">
+            <img src="https://i.ibb.co/kVwvjjrR/long-asia-png.png" alt="Long Asia Logo" className="h-14 md:h-20 w-auto object-contain grayscale brightness-0 invert opacity-70 hover:opacity-100 transition-all duration-500 hover:[filter:drop-shadow(0_0_10px_rgba(255,255,255,0.3))]" />
+          </div>
+          <div className="flex flex-col items-center md:items-start space-y-2">
+            <div className="text-xs font-mono text-neutral-600 text-center md:text-left tracking-widest uppercase">
+              &copy; {new Date().getFullYear()} Long Asia. Global Network.
+            </div>
+            <a href="mailto:support@longasiagroups.com" className="text-xs font-mono text-neutral-400 hover:text-white transition-colors tracking-widest uppercase flex items-center gap-2">
+              support@longasiagroups.com
+            </a>
+          </div>
+          <div className="flex space-x-6 text-xs font-mono tracking-widest uppercase text-neutral-500">
+            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="#" className="hover:text-white transition-colors">Security</a>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  );
+}
