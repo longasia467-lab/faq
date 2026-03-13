@@ -340,8 +340,8 @@
             const [currentLang, setCurrentLang] = useState('EN');
             const [tradeInfo, setTradeInfo] = useState({ status: 'CLOSED', message: 'TRADE SESSION CLOSED' });
             
-            // Notification State
-            const [notifPermission, setNotifPermission] = useState(typeof window !== "undefined" ? Notification.permission : 'default');
+            // Notification State - Safely checking for iOS compatibility
+            const [notifPermission, setNotifPermission] = useState((typeof window !== "undefined" && "Notification" in window) ? window.Notification.permission : 'default');
             const prevTradeStatus = useRef('CLOSED');
 
             const activeCategoryData = faqData.find(cat => cat.id === active);
@@ -364,7 +364,7 @@
             
             const requestNotificationPermission = () => {
                 if (!("Notification" in window)) {
-                    alert("This browser does not support desktop notifications.");
+                    alert("Your browser does not support desktop notifications. (Note: iOS devices may require you to add this page to your Home Screen first).");
                 } else if (Notification.permission !== "denied") {
                     Notification.requestPermission().then((permission) => {
                         setNotifPermission(permission);
@@ -420,9 +420,9 @@
                         newStatus = 'CLOSED';
                     }
 
-                    // Push Notification Logic
+                    // Push Notification Logic safely
                     if (newStatus === 'LIVE' && prevTradeStatus.current !== 'LIVE') {
-                        if (Notification.permission === 'granted') {
+                        if ("Notification" in window && window.Notification.permission === 'granted') {
                             new Notification("Long Asia Update", {
                                 body: "TRADE IS LIVE! The trading session has officially started.",
                                 icon: "https://i.ibb.co/kVwvjjrR/long-asia-png.png"
