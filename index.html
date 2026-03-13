@@ -371,11 +371,14 @@
                                 Support & FAQ
                                 {currentView === 'support' && <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
                             </button>
+                            <button onClick={() => setCurrentView('tutorials')} className={`text-[10px] md:text-xs tracking-[0.2em] uppercase transition-colors relative ${currentView === 'tutorials' ? 'text-white font-medium' : 'text-neutral-400 hover:text-white font-medium'}`}>
+                                Tutorials
+                                {currentView === 'tutorials' && <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
+                            </button>
                             <button onClick={() => setCurrentView('performance')} className={`text-[10px] md:text-xs tracking-[0.2em] uppercase transition-colors relative ${currentView === 'performance' ? 'text-white font-medium' : 'text-neutral-400 hover:text-white font-medium'}`}>
                                 Performance
                                 {currentView === 'performance' && <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
                             </button>
-                            <a href="#" className="text-neutral-400 hover:text-white transition-colors text-[10px] md:text-xs tracking-[0.2em] uppercase font-medium">Contact</a>
                         </div>
 
                         {/* Right Side Buttons & Icons */}
@@ -459,11 +462,14 @@
                             Support & FAQ
                             {currentView === 'support' && <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
                         </button>
+                        <button onClick={() => { setCurrentView('tutorials'); setMobileMenuOpen(false); }} className={`text-xl tracking-[0.2em] uppercase transition-colors relative ${currentView === 'tutorials' ? 'text-white font-medium' : 'text-neutral-400 hover:text-white font-medium'}`}>
+                            Tutorials
+                            {currentView === 'tutorials' && <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
+                        </button>
                         <button onClick={() => { setCurrentView('performance'); setMobileMenuOpen(false); }} className={`text-xl tracking-[0.2em] uppercase transition-colors relative ${currentView === 'performance' ? 'text-white font-medium' : 'text-neutral-400 hover:text-white font-medium'}`}>
                             Performance
                             {currentView === 'performance' && <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
                         </button>
-                        <a href="#" className="text-white text-xl tracking-[0.2em] uppercase font-medium hover:text-neutral-400 transition-colors" onClick={() => setMobileMenuOpen(false)}>Contact</a>
                         
                         <div className="flex flex-col items-center gap-4 mt-8 w-full max-w-xs px-4">
                             <a href="https://p2p.longasiagroup.com/" target="_blank" className="w-full py-4 bg-white text-black uppercase tracking-widest text-sm font-bold text-center transition-all shadow-[0_0_15px_rgba(255,255,255,0.2)]">P2P Withdrawal</a>
@@ -558,6 +564,31 @@
                                     {activeCategoryData.questions.map((q, i) => <FAQItem key={i} {...q} />)}
                                 </div>
                             </section>
+                        </main>
+                    ) : currentView === 'tutorials' ? (
+                        <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-32 animate-fade-in-content relative z-10">
+                            <div className="text-center mb-16">
+                                <h2 className="text-2xl sm:text-3xl font-light tracking-widest uppercase mb-4 text-white">Platform Tutorials</h2>
+                                <div className="w-16 h-[1px] bg-white/30 mx-auto"></div>
+                                <p className="max-w-2xl mx-auto mt-6 text-neutral-500 font-light text-sm tracking-wider uppercase">Official Explanations and Guides</p>
+                            </div>
+
+                            {/* Video Container */}
+                            <div className="max-w-4xl mx-auto bg-white/5 border border-white/10 p-4 sm:p-8 backdrop-blur-md relative overflow-hidden group hover:border-white/30 transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                
+                                <div className="relative w-full pb-[56.25%] h-0 rounded bg-black/50 border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                                    <iframe 
+                                        className="absolute top-0 left-0 w-full h-full rounded"
+                                        src="https://www.youtube.com/embed/zI-1E4Lxl8I" 
+                                        title="Long Asia Explanation Video" 
+                                        frameBorder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                        referrerPolicy="strict-origin-when-cross-origin"
+                                        allowFullScreen>
+                                    </iframe>
+                                </div>
+                            </div>
                         </main>
                     ) : (
                         <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-32 animate-fade-in-content relative z-10">
