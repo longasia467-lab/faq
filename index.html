@@ -120,6 +120,12 @@
             </svg>
         );
 
+        const PlayIcon = ({className="w-6 h-6"}) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+        );
+
         const paths = {
             withdrawal: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
             transparency: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4",
@@ -128,7 +134,9 @@
             security: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
             accountability: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
             menu: "M4 6h16M4 12h16M4 18h16",
-            close: "M6 18L18 6M6 6l12 12"
+            close: "M6 18L18 6M6 6l12 12",
+            chevronDown: "M6 9l6 6 6-6",
+            chevronUp: "M18 15l-6-6-6 6"
         };
 
         const faqData = [
@@ -192,6 +200,19 @@
                     { q: "What if withdrawals aren't restored?", a: "We are confident in restoration, but we have a legal liquidation plan to return capital via alternative channels." }
                 ]
             }
+        ];
+
+        // Historical Performance Data Based on Constraints
+        // Math: $8 per 100 trades for a $500 account. 
+        // Silver (50k) = trades * 8. Gold (250k) = trades * 40. Diamond (1.8M) = trades * 288.
+        const performanceData = [
+            { month: 'March 2026', returns: '+4.26%', status: '(Counting)', trades: 64, silver: 512, gold: 2560, diamond: 18432 },
+            { month: 'February 2026', returns: '+10.88%', status: '', trades: 145, silver: 1160, gold: 5800, diamond: 41760 },
+            { month: 'January 2026', returns: '+12.20%', status: '', trades: 348, silver: 2784, gold: 13920, diamond: 100224 },
+            { month: 'December 2025', returns: '+7.20%', status: '', trades: 228, silver: 1824, gold: 9120, diamond: 65664 },
+            { month: 'November 2025', returns: '+8.10%', status: '', trades: 252, silver: 2016, gold: 10080, diamond: 72576 },
+            { month: 'October 2025', returns: '+6.98%', status: '', trades: 245, silver: 1960, gold: 9800, diamond: 70560 },
+            { month: 'September 2025', returns: '+7.35%', status: '', trades: 234, silver: 1872, gold: 9360, diamond: 67392 }
         ];
 
         const FAQItem = ({ q, a }) => {
@@ -331,7 +352,7 @@
         };
 
         const App = () => {
-            const [currentView, setCurrentView] = useState('support'); // 'support', 'performance', 'tutorials'
+            const [currentView, setCurrentView] = useState('support'); // 'support', 'performance', 'tutorials', 'knowledge'
             const [active, setActive] = useState(faqData[0].id);
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
             const [chatOpen, setChatOpen] = useState(false);
@@ -340,13 +361,14 @@
             const [currentLang, setCurrentLang] = useState('EN');
             const [tradeInfo, setTradeInfo] = useState({ status: 'CLOSED', message: 'TRADE SESSION CLOSED' });
             
-            // Notification State - Safely checking for iOS compatibility
+            // Performance section state
+            const [selectedPerfMonth, setSelectedPerfMonth] = useState(null);
+
             const [notifPermission, setNotifPermission] = useState((typeof window !== "undefined" && "Notification" in window) ? window.Notification.permission : 'default');
             const prevTradeStatus = useRef('CLOSED');
 
             const activeCategoryData = faqData.find(cat => cat.id === active);
 
-            // Handler for triggering Google Translate
             const changeLang = (lang) => {
                 setCurrentLang(lang);
                 setLangMenuOpen(false);
@@ -378,7 +400,6 @@
                 }
             };
 
-            // Initialize Butter Smooth Scrolling and Trade Status Logic
             useEffect(() => {
                 const lenis = new Lenis({
                     duration: 1.5, 
@@ -394,7 +415,6 @@
 
                 requestAnimationFrame(raf);
 
-                // Trade Status Tracker Logic
                 const checkTradeStatus = () => {
                     const now = new Date();
                     const currentMins = now.getHours() * 60 + now.getMinutes();
@@ -408,7 +428,8 @@
                         setTradeInfo({ status: 'LIVE', message: 'TRADE IS LIVE' });
                         newStatus = 'LIVE';
                     } else if (currentMins >= summaryTime) {
-                        // Generate a number strictly between 2, 4, 6, 8, 10
+                        // Dynamically pick between 2, 4, 6, 8, 10
+                        // Weighted heavily towards 6 (~60% chance)
                         const dayOfMonth = now.getDate();
                         const tradeDistribution = [6, 4, 6, 8, 6, 2, 6, 10, 6, 4, 6, 6, 8, 6, 2, 6, 10, 6, 6, 4, 6, 8, 6, 2, 6, 10, 6, 6, 4, 6, 8, 6];
                         const totalTrades = tradeDistribution[dayOfMonth] || 6;
@@ -420,7 +441,6 @@
                         newStatus = 'CLOSED';
                     }
 
-                    // Push Notification Logic safely
                     if (newStatus === 'LIVE' && prevTradeStatus.current !== 'LIVE') {
                         if ("Notification" in window && window.Notification.permission === 'granted') {
                             new Notification("Long Asia Update", {
@@ -467,28 +487,32 @@
                                 Performance
                                 {currentView === 'performance' && <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
                             </button>
+                            <button onClick={() => setCurrentView('knowledge')} className={`text-[10px] md:text-xs tracking-[0.2em] uppercase transition-colors relative ${currentView === 'knowledge' ? 'text-white font-medium' : 'text-neutral-400 hover:text-white font-medium'}`}>
+                                Knowledge
+                                {currentView === 'knowledge' && <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
+                            </button>
                         </div>
 
-                        {/* Right Side Buttons & Icons */}
-                        <div className="flex items-center space-x-2 sm:space-x-4 z-50">
+                        {/* Right Side Buttons & Icons - Ordered correctly */}
+                        <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4 z-50">
                             <a href="https://p2p.longasiagroup.com/" target="_blank" className="relative px-4 py-2 md:px-6 md:py-2.5 bg-white text-black uppercase tracking-widest text-[10px] md:text-xs font-bold hover:bg-neutral-200 transition-all hidden xl:block shadow-[0_0_15px_rgba(255,255,255,0.2)]">P2P Withdrawal</a>
                             <a href="https://login.longasiagroups.com/" target="_blank" className="relative px-4 py-2 md:px-6 md:py-2.5 border border-white/30 uppercase tracking-widest text-[10px] md:text-xs font-bold hover:bg-white/10 text-white transition-all hidden sm:block">User Login</a>
                             
-                            {/* Notification Bell Icon */}
+                            {/* 1. Notification Bell Icon */}
                             <button 
                                 onClick={requestNotificationPermission} 
                                 title="Enable Notifications"
-                                className="p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative"
+                                className="p-1.5 sm:p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative"
                             >
                                 <BellIcon className={`w-5 h-5 sm:w-6 sm:h-6 ${notifPermission === 'granted' ? 'text-green-400' : ''}`} />
                                 {notifPermission !== 'granted' && (
-                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-black animate-pulse"></span>
+                                    <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 bg-red-500 rounded-full border border-black animate-pulse"></span>
                                 )}
                             </button>
 
-                            {/* Language Support Dropdown */}
-                            <div className="relative hidden sm:block">
-                                <button onClick={() => setLangMenuOpen(!langMenuOpen)} className="flex items-center gap-1.5 p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative z-[110]">
+                            {/* 2. Language Support Dropdown */}
+                            <div className="relative">
+                                <button onClick={() => setLangMenuOpen(!langMenuOpen)} className="flex items-center gap-1.5 p-1.5 sm:p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative z-[110]">
                                     <GlobeIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                                     <span key={currentLang} className="notranslate text-[10px] font-bold tracking-widest uppercase hidden lg:block">{currentLang}</span>
                                 </button>
@@ -510,9 +534,9 @@
                                 )}
                             </div>
 
-                            {/* Email Support Dropdown Component */}
+                            {/* 3. Email Support Dropdown Component */}
                             <div className="relative">
-                                <button onClick={() => setMailMenuOpen(!mailMenuOpen)} className="p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative z-[110]">
+                                <button onClick={() => setMailMenuOpen(!mailMenuOpen)} className="p-1.5 sm:p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative z-[110]">
                                     <MailIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                                 </button>
                                 
@@ -540,11 +564,13 @@
                                 )}
                             </div>
                             
-                            <button onClick={() => setChatOpen(true)} className="p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5">
+                            {/* 4. Chat Bot Icon */}
+                            <button onClick={() => setChatOpen(true)} className="p-1.5 sm:p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5">
                                 <ChatIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                             </button>
 
-                            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 text-white hover:text-neutral-300 transition-colors">
+                            {/* 5. Mobile Menu Toggle Button */}
+                            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-1.5 sm:p-2 text-white hover:text-neutral-300 transition-colors">
                                 <Icon path={mobileMenuOpen ? paths.close : paths.menu} className="w-6 h-6 sm:w-7 sm:h-7" />
                             </button>
                         </div>
@@ -593,6 +619,10 @@
                         <button onClick={() => { setCurrentView('performance'); setMobileMenuOpen(false); }} className={`text-xl tracking-[0.2em] uppercase transition-colors relative ${currentView === 'performance' ? 'text-white font-medium' : 'text-neutral-400 hover:text-white font-medium'}`}>
                             Performance
                             {currentView === 'performance' && <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
+                        </button>
+                        <button onClick={() => { setCurrentView('knowledge'); setMobileMenuOpen(false); }} className={`text-xl tracking-[0.2em] uppercase transition-colors relative ${currentView === 'knowledge' ? 'text-white font-medium' : 'text-neutral-400 hover:text-white font-medium'}`}>
+                            Knowledge
+                            {currentView === 'knowledge' && <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>}
                         </button>
                         
                         <div className="flex flex-col items-center gap-4 mt-8 w-full max-w-xs px-4">
@@ -658,6 +688,18 @@
                             <a href="https://login.longasiagroups.com/" target="_blank" className="px-8 py-4 border border-white/30 text-white text-xs md:text-sm font-bold uppercase tracking-[0.2em] hover:bg-white/5 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
                                 User Login
                             </a>
+                        </div>
+
+                        {/* Front Page Language Selector */}
+                        <div className="mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-3xl mx-auto animate-fade-up delay-500">
+                            {['EN', 'HI', 'MR', 'TA', 'TE'].map(lang => {
+                                const langName = { 'EN': 'English', 'HI': 'Hindi', 'MR': 'Marathi', 'TA': 'Tamil', 'TE': 'Telugu' }[lang];
+                                return (
+                                <button key={lang} onClick={() => changeLang(lang)} className={`text-[10px] sm:text-xs font-bold tracking-widest uppercase px-5 py-3 rounded transition-all duration-300 ${currentLang === lang ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'bg-[#111] text-neutral-500 hover:text-white hover:bg-white/10'}`}>
+                                    <span className="notranslate">{langName}</span>
+                                </button>
+                                );
+                            })}
                         </div>
                     </header>
 
@@ -726,52 +768,103 @@
                                 </div>
                             </div>
                         </main>
-                    ) : (
+                    ) : currentView === 'knowledge' ? (
                         <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-32 animate-fade-in-content relative z-10">
                             <div className="text-center mb-16">
-                                <h2 className="text-2xl sm:text-3xl font-light tracking-widest uppercase mb-4 text-white">Historical Performance</h2>
+                                <h2 className="text-2xl sm:text-3xl font-light tracking-widest uppercase mb-4 text-white">Important Knowledge Sessions</h2>
                                 <div className="w-16 h-[1px] bg-white/30 mx-auto"></div>
+                                <p className="max-w-2xl mx-auto mt-6 text-neutral-500 font-light text-sm tracking-wider uppercase">Master the ecosystem and leadership protocols</p>
                             </div>
 
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                                {/* Lifetime Returns */}
-                                <div className="bg-white/5 border border-white/10 p-8 sm:p-12 backdrop-blur-md flex flex-col items-center justify-center relative overflow-hidden group hover:border-white/30 transition-all duration-500">
-                                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                    <p className="text-[10px] tracking-widest uppercase text-neutral-500 mb-4 text-center">Total Returns Since Inception</p>
-                                    <h3 className="notranslate text-6xl sm:text-7xl lg:text-8xl font-light text-white tracking-tighter mb-2">+412.8%</h3>
-                                    <p className="text-xs tracking-wider uppercase text-neutral-400">Verified by immutable ledger</p>
-                                </div>
-
-                                {/* Previous Month */}
-                                <div className="bg-white/5 border border-white/10 p-8 sm:p-12 backdrop-blur-md flex flex-col items-center justify-center relative overflow-hidden group hover:border-white/30 transition-all duration-500">
-                                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                    <p className="text-[10px] tracking-widest uppercase text-neutral-500 mb-4 text-center">Previous Month Returns</p>
-                                    <h3 className="notranslate text-6xl sm:text-7xl lg:text-8xl font-light text-white tracking-tighter mb-2">+6.4%</h3>
-                                    <p className="text-xs tracking-wider uppercase text-neutral-400">Stable delta-neutral yield</p>
-                                </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                                {[
+                                    { title: "All About Long Asia", id: "01", desc: "Comprehensive overview of our ecosystem and infrastructure." },
+                                    { title: "Long Asia Business Model", id: "02", desc: "Deep dive into our quantitative trading and revenue streams." },
+                                    { title: "Per Day Withdrawals & Deposits", id: "03", desc: "Understanding the financial flow, limits, and processing times." },
+                                    { title: "Leadership & Ranks in Long Asia", id: "04", desc: "Unlock the referral structure, volume requirements, and commissions." }
+                                ].map((session, idx) => (
+                                    <div key={idx} className="bg-white/5 border border-white/10 p-6 sm:p-8 backdrop-blur-md relative overflow-hidden group hover:border-white/30 hover:-translate-y-1 transition-all duration-500 cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+                                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                        <div className="flex items-start gap-4">
+                                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white group-hover:text-black transition-colors duration-500">
+                                                <PlayIcon className="w-5 h-5 ml-1" />
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] tracking-[0.2em] text-neutral-500 mb-2 uppercase">Session {session.id}</p>
+                                                <h3 className="text-lg sm:text-xl font-medium tracking-wide text-white mb-2 group-hover:text-white transition-colors">{session.title}</h3>
+                                                <p className="text-xs text-neutral-400 leading-relaxed">{session.desc}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </main>
+                    ) : (
+                        <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-32 animate-fade-in-content relative z-10">
+                            <div className="text-center mb-12">
+                                <h2 className="text-2xl sm:text-3xl font-light tracking-widest uppercase mb-4 text-white">Monthly Returns & Commission Potential</h2>
+                                <div className="w-16 h-[1px] bg-white/30 mx-auto"></div>
+                                <p className="max-w-2xl mx-auto mt-6 text-neutral-500 font-light text-sm tracking-wider uppercase">Click a month to view trade volume and rank-based commission estimates.</p>
                             </div>
 
-                            {/* Past 4 Months Table/Grid */}
-                            <div className="bg-white/5 border border-white/10 p-8 sm:p-12 backdrop-blur-md relative overflow-hidden group hover:border-white/30 transition-all duration-500">
-                                <p className="text-[10px] tracking-widest uppercase text-neutral-500 mb-8 text-center">Past 4 Months History</p>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-                                    <div className="border-r border-white/10 last:border-0 border-b sm:border-b-0 pb-6 sm:pb-0">
-                                        <h4 className="notranslate text-3xl sm:text-4xl font-light text-white mb-2">+5.8%</h4>
-                                        <span className="text-[10px] uppercase tracking-widest text-neutral-500">Month -4</span>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {performanceData.map((data, index) => (
+                                    <div 
+                                        key={index} 
+                                        onClick={() => setSelectedPerfMonth(selectedPerfMonth === index ? null : index)} 
+                                        className="bg-white/5 border border-white/10 p-6 backdrop-blur-md relative overflow-hidden group hover:border-white/30 transition-all duration-500 cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+                                    >
+                                        {/* Header (Always visible) */}
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <h4 className="notranslate text-3xl font-light text-white mb-1">{data.returns}</h4>
+                                                <span className="notranslate text-[10px] uppercase tracking-widest text-neutral-500">{data.month} <span className="text-neutral-400">{data.status}</span></span>
+                                            </div>
+                                            <div className={`p-2 border rounded-full transition-all duration-500 ${selectedPerfMonth === index ? 'border-white bg-white text-black' : 'border-white/20 text-white group-hover:border-white/60'}`}>
+                                                <Icon path={selectedPerfMonth === index ? paths.chevronUp : paths.chevronDown} className="w-4 h-4" />
+                                            </div>
+                                        </div>
+
+                                        {/* Expanded Details */}
+                                        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${selectedPerfMonth === index ? 'max-h-[500px] mt-6 pt-6 border-t border-white/10 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                            <div className="flex justify-between items-center mb-6">
+                                                <span className="text-xs uppercase tracking-widest text-neutral-400">Total Trades Taken</span>
+                                                <span className="notranslate text-xl font-bold text-white">{data.trades}</span>
+                                            </div>
+                                            
+                                            <p className="text-[10px] uppercase tracking-widest text-neutral-500 mb-4">Estimated Potential Commission (1 Downline Referral)</p>
+                                            
+                                            <div className="space-y-3">
+                                                {/* Silver */}
+                                                <div className="flex justify-between items-center bg-black/40 p-3 rounded border border-white/5">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full bg-slate-300 shadow-[0_0_8px_rgba(203,213,225,0.8)]"></div>
+                                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-300">Silver <span className="notranslate text-[9px] font-normal text-neutral-500 ml-1">(50K Vol)</span></span>
+                                                    </div>
+                                                    <span className="notranslate text-sm font-bold text-slate-300">${data.silver.toLocaleString()}</span>
+                                                </div>
+                                                
+                                                {/* Gold */}
+                                                <div className="flex justify-between items-center bg-amber-500/5 p-3 rounded border border-amber-500/20">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]"></div>
+                                                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Gold <span className="notranslate text-[9px] font-normal text-amber-500/50 ml-1">(250K Vol)</span></span>
+                                                    </div>
+                                                    <span className="notranslate text-sm font-bold text-amber-400">${data.gold.toLocaleString()}</span>
+                                                </div>
+                                                
+                                                {/* Diamond */}
+                                                <div className="flex justify-between items-center bg-cyan-500/5 p-3 rounded border border-cyan-500/20">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
+                                                        <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">Diamond <span className="notranslate text-[9px] font-normal text-cyan-500/50 ml-1">(1.8M Vol)</span></span>
+                                                    </div>
+                                                    <span className="notranslate text-sm font-bold text-cyan-400">${data.diamond.toLocaleString()}</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="border-r-0 sm:border-r border-white/10 last:border-0 border-b sm:border-b-0 pb-6 sm:pb-0">
-                                        <h4 className="notranslate text-3xl sm:text-4xl font-light text-white mb-2">+7.1%</h4>
-                                        <span className="text-[10px] uppercase tracking-widest text-neutral-500">Month -3</span>
-                                    </div>
-                                    <div className="border-r border-white/10 last:border-0">
-                                        <h4 className="notranslate text-3xl sm:text-4xl font-light text-white mb-2">+4.9%</h4>
-                                        <span className="text-[10px] uppercase tracking-widest text-neutral-500">Month -2</span>
-                                    </div>
-                                    <div className="border-r-0 border-white/10 last:border-0">
-                                        <h4 className="notranslate text-3xl sm:text-4xl font-light text-white mb-2">+6.4%</h4>
-                                        <span className="text-[10px] uppercase tracking-widest text-neutral-500">Previous Month</span>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                         </main>
                     )}
