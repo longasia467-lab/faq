@@ -498,19 +498,7 @@
                             <a href="https://p2p.longasiagroup.com/" target="_blank" className="relative px-4 py-2 md:px-6 md:py-2.5 bg-white text-black uppercase tracking-widest text-[10px] md:text-xs font-bold hover:bg-neutral-200 transition-all hidden xl:block shadow-[0_0_15px_rgba(255,255,255,0.2)]">P2P Withdrawal</a>
                             <a href="https://login.longasiagroups.com/" target="_blank" className="relative px-4 py-2 md:px-6 md:py-2.5 border border-white/30 uppercase tracking-widest text-[10px] md:text-xs font-bold hover:bg-white/10 text-white transition-all hidden sm:block">User Login</a>
                             
-                            {/* 1. Notification Bell Icon */}
-                            <button 
-                                onClick={requestNotificationPermission} 
-                                title="Enable Notifications"
-                                className="p-1.5 sm:p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative"
-                            >
-                                <BellIcon className={`w-5 h-5 sm:w-6 sm:h-6 ${notifPermission === 'granted' ? 'text-green-400' : ''}`} />
-                                {notifPermission !== 'granted' && (
-                                    <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 bg-red-500 rounded-full border border-black animate-pulse"></span>
-                                )}
-                            </button>
-
-                            {/* 2. Language Support Dropdown */}
+                            {/* 1. Language Support Dropdown (Yellow Circle equivalent) */}
                             <div className="relative">
                                 <button onClick={() => setLangMenuOpen(!langMenuOpen)} className="flex items-center gap-1.5 p-1.5 sm:p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative z-[110]">
                                     <GlobeIcon className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -533,6 +521,18 @@
                                     </>
                                 )}
                             </div>
+
+                            {/* 2. Notification Bell Icon (Red Circle equivalent) */}
+                            <button 
+                                onClick={requestNotificationPermission} 
+                                title="Enable Notifications"
+                                className="p-1.5 sm:p-2 text-white hover:text-neutral-400 transition-colors rounded-full hover:bg-white/5 relative"
+                            >
+                                <BellIcon className={`w-5 h-5 sm:w-6 sm:h-6 ${notifPermission === 'granted' ? 'text-green-400' : ''}`} />
+                                {notifPermission !== 'granted' && (
+                                    <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 bg-red-500 rounded-full border border-black animate-pulse"></span>
+                                )}
+                            </button>
 
                             {/* 3. Email Support Dropdown Component */}
                             <div className="relative">
@@ -629,18 +629,6 @@
                             <a href="https://p2p.longasiagroup.com/" target="_blank" className="w-full py-4 bg-white text-black uppercase tracking-widest text-sm font-bold text-center transition-all shadow-[0_0_15px_rgba(255,255,255,0.2)]">P2P Withdrawal</a>
                             <a href="https://login.longasiagroups.com/" target="_blank" className="w-full py-4 border border-white/30 uppercase tracking-widest text-sm font-bold bg-transparent text-white text-center transition-all">User Login</a>
                         </div>
-
-                        {/* Mobile Language Selector */}
-                        <div className="flex flex-wrap items-center justify-center gap-2 mt-4 border-t border-white/10 pt-6 w-full max-w-xs">
-                            {['EN', 'HI', 'MR', 'TA', 'TE'].map(lang => {
-                                const langName = { 'EN': 'English', 'HI': 'Hindi', 'MR': 'Marathi', 'TA': 'Tamil', 'TE': 'Telugu' }[lang];
-                                return (
-                                <button key={lang} onClick={() => changeLang(lang)} className={`text-[10px] font-bold tracking-widest uppercase px-3 py-2 rounded transition-colors ${currentLang === lang ? 'bg-white text-black' : 'text-neutral-500 hover:text-white bg-white/5'}`}>
-                                    <span className="notranslate">{langName}</span>
-                                </button>
-                                );
-                            })}
-                        </div>
                     </div>
 
                     {/* Hero */}
@@ -688,18 +676,6 @@
                             <a href="https://login.longasiagroups.com/" target="_blank" className="px-8 py-4 border border-white/30 text-white text-xs md:text-sm font-bold uppercase tracking-[0.2em] hover:bg-white/5 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
                                 User Login
                             </a>
-                        </div>
-
-                        {/* Front Page Language Selector */}
-                        <div className="mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-3xl mx-auto animate-fade-up delay-500">
-                            {['EN', 'HI', 'MR', 'TA', 'TE'].map(lang => {
-                                const langName = { 'EN': 'English', 'HI': 'Hindi', 'MR': 'Marathi', 'TA': 'Tamil', 'TE': 'Telugu' }[lang];
-                                return (
-                                <button key={lang} onClick={() => changeLang(lang)} className={`text-[10px] sm:text-xs font-bold tracking-widest uppercase px-5 py-3 rounded transition-all duration-300 ${currentLang === lang ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'bg-[#111] text-neutral-500 hover:text-white hover:bg-white/10'}`}>
-                                    <span className="notranslate">{langName}</span>
-                                </button>
-                                );
-                            })}
                         </div>
                     </header>
 
